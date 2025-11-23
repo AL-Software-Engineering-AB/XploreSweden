@@ -17,10 +17,6 @@ struct ContentView: View {
                 .ignoresSafeArea()
                 .onAppear { loader.loadLandmarks() }
             
-            VStack {
-                    Spacer()
-            
-            
             if let id = selectedLandmarkID,
                let landmark = loader.landmarks.first(where: { $0.id == id }) {
                 LandmarkPopup(
@@ -31,14 +27,11 @@ struct ContentView: View {
                 .transition(.move(edge: .bottom))
                 .animation(.spring(), value: selectedLandmarkID)
                 .padding(.horizontal)
-                .padding(.bottom, 10)
-                
-                }
+                .frame(maxHeight: .infinity, alignment: .bottom)
             }
         }
     }
 }
-
 
 #Preview {
     ContentView()
