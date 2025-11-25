@@ -70,7 +70,7 @@ struct ClusteredMapView: UIViewRepresentable {
                     for: annotation
                 )
                 clusterView.displayPriority = .defaultHigh
-                clusterView.canShowCallout = false // We handle popup manually
+                clusterView.canShowCallout = false
                 return clusterView
             }
 
@@ -80,17 +80,43 @@ struct ClusteredMapView: UIViewRepresentable {
                 for: annotation
             ) as! ClusteredAnnotationView
             
-            view.canShowCallout = false // Disable default popup
+            view.canShowCallout = false
             return view
         }
 
+        // MARK: - PIN SELECT WITH ZOOM + CLUSTER ZOOM 
+        
         func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-            // Trigger popup by setting selectedLandmarkID
+
+            // 1. If it's a cluster → zoom in to break it up
+            if let cluster = view.annotation as? MKClusterAnnotation {
+
+                let clusterRegion = MKCoordinateRegion(
+                    center: cluster.coordinate,
+                    latitudinalMeters: 50000,
+                    longitudinalMeters: 50000
+                )
+
+                mapView.setRegion(clusterRegion, animated: true)
+                return
+            }
+
+            // 2. If it's an individual pin → zoom + open popup
             if let annotation = view.annotation as? MKPointAnnotation {
+
+                // Set selected landmark for popup
                 parent.selectedLandmarkID = annotation.landmarkID
+
+                // Zoom in smoothly on the landmark
+                let region = MKCoordinateRegion(
+                    center: annotation.coordinate,
+                    latitudinalMeters: 5000,
+                    longitudinalMeters: 5000
+                )
+
+                mapView.setRegion(region, animated: true)
             }
         }
-
     }
 }
 
