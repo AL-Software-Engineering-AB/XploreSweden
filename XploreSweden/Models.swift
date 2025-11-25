@@ -21,6 +21,10 @@ struct Landmark: Identifiable, Decodable {
     let region: String
     let url: String
     
+    private enum CodingKeys: String, CodingKey {
+        case title, extract, coords, region, url
+    }
+    
     var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: coords.lat, longitude: coords.lon)
     }

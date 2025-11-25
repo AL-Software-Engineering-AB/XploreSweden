@@ -20,8 +20,7 @@ struct ContentView: View {
             if let id = selectedLandmarkID,
                let landmark = loader.landmarks.first(where: { $0.id == id }) {
                 LandmarkPopup(
-                    title: landmark.title,
-                    extract: landmark.extract,
+                    landmark: landmark,
                     onClose: { selectedLandmarkID = nil }
                 )
                 .transition(.move(edge: .bottom))

@@ -1,8 +1,8 @@
 import SwiftUI
+import MapKit
 
 struct LandmarkPopup: View {
-    let title: String
-    let extract: String
+    let landmark: Landmark
     let onClose: () -> Void
 
     @State private var dragOffset: CGFloat = 0
@@ -30,7 +30,7 @@ struct LandmarkPopup: View {
                             .foregroundColor(.gray.opacity(0.5))
                             .padding(.top, 8)
                         
-                        Text(title)
+                        Text(landmark.title)
                             .font(.headline)
                             .multilineTextAlignment(.center)
                             .foregroundColor(.primary)
@@ -40,12 +40,11 @@ struct LandmarkPopup: View {
                     .background(.ultraThinMaterial)
                     .zIndex(10)
                     
-                    
                     // MARK: - Scrollable content when expanded
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 12) {
                             
-                            Text(extract)
+                            Text(landmark.extract)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
@@ -54,9 +53,11 @@ struct LandmarkPopup: View {
                             
                             if progress > 0.3 {
                                 HStack(spacing: 16) {
-                                    Button("Öppna i Kartor") {}
-                                        .buttonStyle(.borderedProminent)
-                                        .opacity(Double((progress - 0.3) / 0.7))
+                                    Button("Öppna i Kartor") {
+                                        openInMaps()
+                                    }
+                                    .buttonStyle(.borderedProminent)
+                                    .opacity(Double((progress - 0.3) / 0.7))
                                     
                                     Button("Stäng") { onClose() }
                                         .buttonStyle(.bordered)
@@ -105,6 +106,17 @@ struct LandmarkPopup: View {
                 .animation(.spring(), value: dragOffset)
             }
             .edgesIgnoringSafeArea(.bottom)
+        }
+    }
+    
+    // MARK: - Open in Apple Maps
+    private func openInMaps() {
+        let lat = landmark.coords.lat
+        let lon = landmark.coords.lon
+        let titleEncoded = landmark.title.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        
+        if let url = URL(string: "http://maps.apple.com/?ll=\(lat),\(lon)&q=\(titleEncoded)") {
+            UIApplication.shared.open(url)
         }
     }
 }
