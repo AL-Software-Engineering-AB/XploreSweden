@@ -28,6 +28,13 @@ struct ContentView: View {
                 .padding(.horizontal)
                 .frame(maxHeight: .infinity, alignment: .bottom)
             }
+            
+            VStack {
+                Spacer()
+                AdView()
+                    .frame(width: 320, height: 50)
+                    .padding(.bottom, -34)
+            }
         }
     }
 }
